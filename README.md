@@ -18,7 +18,7 @@ Springboot-springsecurity-example 是一个springboot中应用springsecurity的�
 创建一个继承自org.springframework.security.authentication.AuthenticationProvider的类，实现用户登录验证服务，其中authenticate方法具体验证的方法，其中包括用户名、密码、验证码的比对。
 
 #### 6、配置Spring security
-创建和一个继承自org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter的类，以实现Spring security的配置。
+创建一个继承自org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter的类，以实现Spring security的配置。
 
 configure(HttpSecurity http) 方法实现了绑定自定义验证详情来源、登录和成功后的处理规则。
 configure(AuthenticationManagerBuilder auth) 方法实现了绑定自定义验证的处理规则。
