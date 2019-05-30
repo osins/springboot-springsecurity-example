@@ -324,7 +324,7 @@ public class KaptchaController {
 
 #### 2.matches方法用来比对用户登录时输入的密码和数据库中获取到的加密后的字符串是否匹配。
 ```
-@Override
+    @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         SWebAuthenticationDetails details = (SWebAuthenticationDetails) authentication.getDetails();
 
