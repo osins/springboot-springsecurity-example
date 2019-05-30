@@ -295,4 +295,65 @@ public class KaptchaController {
 }
 ```
 
-BCryptPasswordEncoder是Springboot security中自带的一个用户密码加密工具，encode方法用来加密密码，matches方法用来比对用户登录时输入的密码和数据库中获取到的加密后的字符串是否匹配。
+BCryptPasswordEncoder是Springboot security中自带的一个用户密码加密工具:
+
+#### 1.encode方法用来加密密码
+
+
+```
+    public void addUser(UserInfo userInfo) {
+        if(userInfo.getName()== null || userInfo.getName().isEmpty()){
+            userInfo.setName(userInfo.getUsername());
+        }
+
+        if(userInfo.getUsername()== null || userInfo.getUsername().isEmpty()){
+            return;
+        }
+
+        if(userInfo.getPassword()== null || userInfo.getPassword().isEmpty()){
+            return;
+        }
+
+        BCryptPasswordEncoder encoder =new BCryptPasswordEncoder();
+        userInfo.setPassword(encoder.encode(userInfo.getPassword().trim()));
+
+        UserInfoRecord record = dsl.newRecord(userTable, userInfo);
+        record.store();
+    }
+```
+
+#### 2.matches方法用来比对用户登录时输入的密码和数据库中获取到的加密后的字符串是否匹配。
+```
+@Override
+    public Authentication authenticate(Authentication authentication) throws AuthenticationException {
+        SWebAuthenticationDetails details = (SWebAuthenticationDetails) authentication.getDetails();
+
+        log.debug("auth username:"+details.getUsername());
+        log.debug("auth password:" + details.getPassword());
+        log.debug("auth kaptcha code:"+details.getCaptchCode());
+        log.debug("auth kaptcha session:"+ details.getCaptchSession());
+
+        /** 判断用户是否存在 */
+        SUserDetails userInfo = userDetailService.loadUserByUsername(details.getUsername()); // 这里调用我们的自己写的获取用户的方法；
+        if (userInfo == null) {
+            throw new UsernameNotFoundException("用户不存在");
+        }
+
+        if (!new BCryptPasswordEncoder().matches(details.getPassword(), userInfo.getPassword())) {
+            throw new BadCredentialsException("密码不正确");
+        }
+
+        if (!details.getCaptchCode().equals(details.getCaptchSession())) {
+            throw new BadCredentialsException("验证码不正确");
+        }
+
+        /** 判断账号是否停用/删除 */
+//        if (SystemUserConstants.STOP.equals(userInfo.getStatus()) || SystemUserConstants.DELETED.equals(userInfo.getStatus())) {
+//            throw new DisabledException("账户不可用");
+//        }
+
+        Collection<? extends GrantedAuthority> authorities = userInfo.getAuthorities();
+
+        return new UsernamePasswordAuthenticationToken(details.getUsername(), details.getPassword(), authorities);// 构建返回的用户登录成功的token
+    }
+```
