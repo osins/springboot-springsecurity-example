@@ -1,7 +1,7 @@
 # springboot-springsecurity-example
 springboot-springsecurity-example 是一个springboot中应用springsecurity的例子，同时本示例自定义了用户名、密码、验证码的登录验证。
 
-# spring security重要的几个代码在security目录下，其中代码编写顺序如下：
+### spring security重要的几个代码在security目录下，其中代码编写顺序如下：
 #### 1、创建一个继承自org.springframework.security.core.userdetails.UserDetails的类，该类实现了用户基本信息和登录验证相关的几个方法。
 #### 2、创建一个继承自org.springframework.security.core.userdetails.UserDetailsService的类，实现数据库中获取用户信息的功能代码。
 #### 3、创建一个继承自org.springframework.security.web.authentication.WebAuthenticationDetails的类，实现web验证相关的验证详情来源详情。
