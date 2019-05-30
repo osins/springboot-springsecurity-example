@@ -234,7 +234,7 @@ configure(AuthenticationManagerBuilder auth) 方法实现了绑定自定义验�
     }
 ```
 
-本例中验证码采用了Google的kaptcha，在DefaultController的login方法中初始化和保存验证码到Session，在继承自AuthenticationProvider的SAuthenticationProvider类中比对用户输入的验证码和session中保存的验证码是否一致。
+### 本例中验证码采用了Google的kaptcha，在DefaultController的login方法中初始化和保存验证码到Session，在继承自AuthenticationProvider的SAuthenticationProvider类中比对用户输入的验证码和session中保存的验证码是否一致。
 
 ```
 import javax.imageio.ImageIO;
@@ -295,7 +295,7 @@ public class KaptchaController {
 }
 ```
 
-BCryptPasswordEncoder是Springboot security中自带的一个用户密码加密工具:
+### BCryptPasswordEncoder是Springboot security中自带的一个用户密码加密工具:
 
 #### 1.encode方法用来加密密码
 
