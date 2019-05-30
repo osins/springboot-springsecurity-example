@@ -78,7 +78,7 @@ public class SUserDetailsServiceImpl implements UserDetailsService {
 ```
 
 #### 3、web数据获取
-创建一个继承自org.springframework.security.web.authentication.WebAuthenticationDetails的类，实现web验证相关的验证详情来源。
+创建一个继承自org.springframework.security.web.authentication.WebAuthenticationDetails的类，实现web验证相关的验证详情，其实就是通过此类来获取用户登录提交的表单信息。
 
 ```
 import com.google.code.kaptcha.Constants;
