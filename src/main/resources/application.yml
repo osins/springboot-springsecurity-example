@@ -1,0 +1,45 @@
+server:
+  port: 8010
+
+
+spring:
+  thymeleaf:
+    prefix: classpath:/templates/
+    suffix: .html
+    mode: HTML5
+    encoding: UTF-8
+    cache: false
+
+  resources:
+    chain:
+      strategy:
+        content:
+          enabled: true
+          paths: /**static/album
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/album
+    username: root
+    password: root
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jooq:
+    sql-dialect: MYSQL
+
+  jpa:
+    database: mysql
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL5InnoDBDialect
+
+security:
+  user:
+    failureUrl: /loginfail
+
+album:
+  path: /Users/richard/works/codes/front/src/main/resources/
+
+debug: true

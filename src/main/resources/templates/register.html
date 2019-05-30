@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="/layout/common :: head"></head>
+<body>
+<header th:replace="/layout/front :: header"></header>
+
+<form action="" method="post">
+    <p>账号：<input type="text" name="username" value=""/></p>
+    <p>密码：<input type="text" name="password" value=""/></p>
+    <p><input type="submit" value="注册"/></p>
+</form>
+
+<footer th:replace="/layout/front :: footer"></footer>
+<div th:replace="/layout/common :: footer"></div>
+
+</body>
+
+</html>
