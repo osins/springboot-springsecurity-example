@@ -4,7 +4,7 @@ springboot-springsecurity-example 是一个springboot中应用springsecurity的�
 ### spring security重要的几个代码在security目录下，其中代码编写顺序如下：
 #### 1、创建一个继承自org.springframework.security.core.userdetails.UserDetails的类，该类实现了用户基本信息和登录验证相关的几个方法。
 #### 2、创建一个继承自org.springframework.security.core.userdetails.UserDetailsService的类，实现数据库中获取用户信息的功能代码。
-#### 3、创建一个继承自org.springframework.security.web.authentication.WebAuthenticationDetails的类，实现web验证相关的验证详情来源详情。
+#### 3、创建一个继承自org.springframework.security.web.authentication.WebAuthenticationDetails的类，实现web验证相关的验证详情来源。
 #### 4、创建一个继承自org.springframework.security.authentication.AuthenticationDetailsSource的类，实现web验证相关的来源。
 #### 5、创建一个继承自org.springframework.security.authentication.AuthenticationProvider的类，实现用户登录验证服务，其中authenticate方法具体验证的方法，其中包括用户名、密码、验证码的比对。
 #### 6、创建和一个继承自org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter的类，以实现spring security的配置。
