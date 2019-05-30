@@ -64,9 +64,9 @@ configure(AuthenticationManagerBuilder auth) 方法实现了绑定自定义验�
         http
                 .formLogin().loginPage("/login")
                 .loginProcessingUrl("/login")
-                .authenticationDetailsSource(sAuthenticationDetailsSource)
-                .successHandler(securityAuthenticationSuccessHandler)
-                .failureHandler(securityAuthenticationFailHandler)
+                .authenticationDetailsSource(sAuthenticationDetailsSource) //绑定自定义验证详情来源
+                .successHandler(securityAuthenticationSuccessHandler)   //板顶自定义登录成功后处理规则
+                .failureHandler(securityAuthenticationFailHandler)  //自定义登录失败后的处理规则
                 .permitAll()  // 登录页面链接、登录表单链接、登录失败页面链接配置
                 .and()
                 .authorizeRequests()
@@ -79,7 +79,7 @@ configure(AuthenticationManagerBuilder auth) 方法实现了绑定自定义验�
 
     @Override
     public void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.authenticationProvider(securityAuthenticationProvider);
+        auth.authenticationProvider(securityAuthenticationProvider);  //绑定自定义的登录验证规则
     }
 ```
 
