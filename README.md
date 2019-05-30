@@ -6,8 +6,76 @@ Springboot-springsecurity-example 是一个springboot中应用springsecurity的�
 #### 1、用户信息
 创建一个继承自org.springframework.security.core.userdetails.UserDetails的类，该类实现了用户基本信息和登录验证相关的几个方法。
 
+UserInfo是Jooq连接数据自动生成的pojo，即User表对应的Java对象。
+
+```
+import com.siyuo2o.glass.db.album.tables.pojos.UserInfo;
+import org.springframework.security.core.GrantedAuthority;
+
+import java.util.Collection;
+
+public class SUserDetails extends UserInfo implements org.springframework.security.core.userdetails.UserDetails {
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return null;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
+}
+```
+
 #### 2、数据连接
 创建一个继承自org.springframework.security.core.userdetails.UserDetailsService的类，实现数据库中获取用户信息的功能代码。
+
+```
+import org.jooq.DSLContext;
+import org.jooq.Record;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Component;
+
+@Component
+public class SUserDetailsServiceImpl implements UserDetailsService {
+    private static final Logger log = LoggerFactory.getLogger(SUserDetailsServiceImpl.class);
+
+    @Autowired
+    DSLContext dsl;
+    
+    com.siyuo2o.glass.db.album.tables.UserInfo userTable = com.siyuo2o.glass.db.album.tables.UserInfo.USER_INFO.as("u");
+
+    @Override
+    public SUserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
+        // 从数据库中获取用户信息，这里连接数据库和SQL操作用的Jooq框架
+        Record result = dsl.select().from(userTable).where(userTable.USERNAME.eq(s)).fetchAny();
+        if(result == null){
+            return null;
+        }
+
+        return result.into(SUserDetails.class);
+    }
+}
+```
 
 #### 3、web数据获取
 创建一个继承自org.springframework.security.web.authentication.WebAuthenticationDetails的类，实现web验证相关的验证详情来源。
