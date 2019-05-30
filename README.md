@@ -16,7 +16,40 @@ Springboot-springsecurity-example 是一个springboot中应用springsecurity的�
 创建一个继承自org.springframework.security.authentication.AuthenticationDetailsSource的类，实现web验证相关的来源。
 
 #### 5、自定义登录逻辑
-创建一个继承自org.springframework.security.authentication.AuthenticationProvider的类，实现用户登录验证服务，其中authenticate方法具体验证的方法，其中包括用户名、密码、验证码的比对。
+创建一个继承自org.springframework.security.authentication.AuthenticationProvider的类，实现用户登录验证服务，其中authenticate方法是具体验证的方法，其中包括用户名、密码、验证码的比对。
+
+@Override
+    public Authentication authenticate(Authentication authentication) throws AuthenticationException {
+        SWebAuthenticationDetails details = (SWebAuthenticationDetails) authentication.getDetails();
+
+        log.debug("auth username:"+details.getUsername());
+        log.debug("auth password:" + details.getPassword());
+        log.debug("auth kaptcha code:"+details.getCaptchCode());
+        log.debug("auth kaptcha session:"+ details.getCaptchSession());
+
+        /** 判断用户是否存在 */
+        SUserDetails userInfo = userDetailService.loadUserByUsername(details.getUsername()); // 这里调用我们的自己写的获取用户的方法；
+        if (userInfo == null) {
+            throw new UsernameNotFoundException("用户不存在");
+        }
+
+        if (!new BCryptPasswordEncoder().matches(details.getPassword(), userInfo.getPassword())) {
+            throw new BadCredentialsException("密码不正确");
+        }
+
+        if (!details.getCaptchCode().equals(details.getCaptchSession())) {
+            throw new BadCredentialsException("验证码不正确");
+        }
+
+        /** 判断账号是否停用/删除 */
+//        if (SystemUserConstants.STOP.equals(userInfo.getStatus()) || SystemUserConstants.DELETED.equals(userInfo.getStatus())) {
+//            throw new DisabledException("账户不可用");
+//        }
+
+        Collection<? extends GrantedAuthority> authorities = userInfo.getAuthorities();
+
+        return new UsernamePasswordAuthenticationToken(details.getUsername(), details.getPassword(), authorities);// 构建返回的用户登录成功的token
+    }
 
 #### 6、配置Spring security
 创建一个继承自org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter的类，以实现Spring security的配置。
