@@ -385,19 +385,19 @@ encode方法用来加密密码
 
 ```
     public void addUser(UserInfo userInfo) {
-        if(userInfo.getName()== null || userInfo.getName().isEmpty()){
+        if(userInfo.getName() == null || userInfo.getName().isEmpty()){
             userInfo.setName(userInfo.getUsername());
         }
 
-        if(userInfo.getUsername()== null || userInfo.getUsername().isEmpty()){
+        if(userInfo.getUsername() == null || userInfo.getUsername().isEmpty()){
             return;
         }
 
-        if(userInfo.getPassword()== null || userInfo.getPassword().isEmpty()){
+        if(userInfo.getPassword() == null || userInfo.getPassword().isEmpty()){
             return;
         }
 
-        BCryptPasswordEncoder encoder =new BCryptPasswordEncoder();
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
         userInfo.setPassword(encoder.encode(userInfo.getPassword().trim()));
 
         UserInfoRecord record = dsl.newRecord(userTable, userInfo);
