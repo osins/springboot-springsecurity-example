@@ -1,4 +1,5 @@
 # Springboot-springsecurity-example
+对于初次接触springboot的程序员，可能对于Springboot的安全验证比较陌生，本示例希望能够帮助各位快速掌握Spring security的配置和相关代码的编写。
 Springboot-springsecurity-example 是一个springboot中应用springsecurity的例子，同时本示例自定义了用户名、密码、验证码的登录验证。
 
 ### Spring security重要的几个代码在security目录下，其中代码编写顺序如下：
