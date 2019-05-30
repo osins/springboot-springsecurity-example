@@ -357,3 +357,5 @@ public class KaptchaController {
         return new UsernamePasswordAuthenticationToken(details.getUsername(), details.getPassword(), authorities);// 构建返回的用户登录成功的token
     }
 ```
+
+至此，用户登录时提交的表单信息的获取，用户名、密码、验证码的正确性验证，用户的密码加密和比对都已经实现，一个简单的Springboot的Security安全验证示例完整实现。
