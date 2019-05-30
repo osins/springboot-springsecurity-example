@@ -150,48 +150,6 @@ public class SAuthenticationDetailsSource implements AuthenticationDetailsSource
 创建一个继承自org.springframework.security.authentication.AuthenticationProvider的类，实现用户登录验证服务，其中authenticate方法是具体验证的方法，其中包括用户名、密码、验证码的比对。
 
 ```
-    @Override
-    public Authentication authenticate(Authentication authentication) throws AuthenticationException {
-        SWebAuthenticationDetails details = (SWebAuthenticationDetails) authentication.getDetails();
-
-        log.debug("auth username:"+details.getUsername());
-        log.debug("auth password:" + details.getPassword());
-        log.debug("auth kaptcha code:"+details.getCaptchCode());
-        log.debug("auth kaptcha session:"+ details.getCaptchSession());
-
-        /** 判断用户是否存在 */
-        SUserDetails userInfo = userDetailService.loadUserByUsername(details.getUsername()); // 这里调用我们的自己写的获取用户的方法；
-        if (userInfo == null) {
-            throw new UsernameNotFoundException("用户不存在");
-        }
-
-        if (!new BCryptPasswordEncoder().matches(details.getPassword(), userInfo.getPassword())) {
-            throw new BadCredentialsException("密码不正确");
-        }
-
-        if (!details.getCaptchCode().equals(details.getCaptchSession())) {
-            throw new BadCredentialsException("验证码不正确");
-        }
-
-        /** 判断账号是否停用/删除 */
-//        if (SystemUserConstants.STOP.equals(userInfo.getStatus()) ||                     SystemUserConstants.DELETED.equals(userInfo.getStatus())) {
-//            throw new DisabledException("账户不可用");
-//        }
-
-        Collection<? extends GrantedAuthority> authorities = userInfo.getAuthorities();
-
-        return new UsernamePasswordAuthenticationToken(details.getUsername(), details.getPassword(), authorities);// 构建返回的用户登录成功的token
-    }
-```
-
-#### 6、配置Spring security
-
-创建一个继承自org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter的类，以实现Spring security的配置。
-
-configure(HttpSecurity http) 方法实现了绑定自定义验证详情来源、登录和成功后的处理规则。
-configure(AuthenticationManagerBuilder auth) 方法实现了绑定自定义验证的处理规则。
-
-```
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -267,6 +225,90 @@ public class SAuthenticationProvider implements AuthenticationProvider {
     public boolean supports(Class<?> authentication) {
         return true;// 返回 true ，表示支持执行
     }
+}
+```
+
+#### 6、配置Spring security
+
+创建一个继承自org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter的类，以实现Spring security的配置。
+
+configure(HttpSecurity http) 方法实现了绑定自定义验证详情来源、登录和成功后的处理规则。
+configure(AuthenticationManagerBuilder auth) 方法实现了绑定自定义验证的处理规则。
+
+```
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+
+@Configuration
+@EnableGlobalMethodSecurity(prePostEnabled = true)
+class SWebSecurityConfig extends WebSecurityConfigurerAdapter {
+
+    @Autowired
+    private SAuthenticationDetailsSource sAuthenticationDetailsSource;
+
+    @Autowired
+    private SUserDetailsServiceImpl userDetailService;
+
+    /**
+     * 注入自定义的 AuthenticationProvider (用户名，密码，验证码验证规则）
+     */
+    @Autowired
+    private SAuthenticationProvider securityAuthenticationProvider;
+
+    /**
+     * 注入自定义的 AuthenticationSuccessHandler (验证成功的规则）
+     */
+    @Autowired
+    private SAuthenticationSuccessHandler securityAuthenticationSuccessHandler;
+
+    /**
+     * 注入自定义的 AuthenticationFailureHandler （验证失败的规则）
+     */
+    @Autowired
+    private SAuthenticationFailHandler securityAuthenticationFailHandler;
+
+    @Autowired
+    private SUserDetailsServiceImpl userDetailsService;
+
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+        http
+                .formLogin().loginPage("/login")
+                .loginProcessingUrl("/login")
+                .authenticationDetailsSource(sAuthenticationDetailsSource)
+                .successHandler(securityAuthenticationSuccessHandler)
+                .failureHandler(securityAuthenticationFailHandler)
+                .permitAll()  // 登录页面链接、登录表单链接、登录失败页面链接配置
+                .and()
+                .authorizeRequests()
+                .antMatchers("/ace/**", "/loginfail", "/kaptcha.jpg").permitAll() // 静态资源配置
+                .antMatchers("/index", "/login-error").permitAll() // 免校验链接配置
+                .anyRequest().authenticated()
+                .and()
+                .csrf().disable();
+    }
+
+    @Override
+    public void configure(AuthenticationManagerBuilder auth) throws Exception {
+        auth.authenticationProvider(securityAuthenticationProvider);
+    }
+
+    @Override
+    public AuthenticationManager authenticationManagerBean() {
+        AuthenticationManager authenticationManager = null;
+        try {
+            authenticationManager = super.authenticationManagerBean();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return authenticationManager;
+    }
+
 }
 ```
 
