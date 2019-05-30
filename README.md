@@ -18,7 +18,7 @@ Springboot-springsecurity-example 是一个springboot中应用springsecurity的�
 #### 5、自定义登录逻辑
 创建一个继承自org.springframework.security.authentication.AuthenticationProvider的类，实现用户登录验证服务，其中authenticate方法是具体验证的方法，其中包括用户名、密码、验证码的比对。
 ```
-@Override
+    @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         SWebAuthenticationDetails details = (SWebAuthenticationDetails) authentication.getDetails();
 
@@ -42,7 +42,7 @@ Springboot-springsecurity-example 是一个springboot中应用springsecurity的�
         }
 
         /** 判断账号是否停用/删除 */
-//        if (SystemUserConstants.STOP.equals(userInfo.getStatus()) || SystemUserConstants.DELETED.equals(userInfo.getStatus())) {
+//        if (SystemUserConstants.STOP.equals(userInfo.getStatus()) ||                     SystemUserConstants.DELETED.equals(userInfo.getStatus())) {
 //            throw new DisabledException("账户不可用");
 //        }
 
@@ -57,6 +57,31 @@ Springboot-springsecurity-example 是一个springboot中应用springsecurity的�
 
 configure(HttpSecurity http) 方法实现了绑定自定义验证详情来源、登录和成功后的处理规则。
 configure(AuthenticationManagerBuilder auth) 方法实现了绑定自定义验证的处理规则。
+
+```
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+        http
+                .formLogin().loginPage("/login")
+                .loginProcessingUrl("/login")
+                .authenticationDetailsSource(sAuthenticationDetailsSource)
+                .successHandler(securityAuthenticationSuccessHandler)
+                .failureHandler(securityAuthenticationFailHandler)
+                .permitAll()  // 登录页面链接、登录表单链接、登录失败页面链接配置
+                .and()
+                .authorizeRequests()
+                .antMatchers("/ace/**", "/loginfail", "/kaptcha.jpg").permitAll() // 静态资源配置
+                .antMatchers("/index", "/login-error").permitAll() // 免校验链接配置
+                .anyRequest().authenticated()
+                .and()
+                .csrf().disable();
+    }
+
+    @Override
+    public void configure(AuthenticationManagerBuilder auth) throws Exception {
+        auth.authenticationProvider(securityAuthenticationProvider);
+    }
+```
 
 本例中验证码采用了Google的kaptcha，在DefaultController的login方法中初始化和保存验证码到Session，在继承自AuthenticationProvider的SAuthenticationProvider类中比对用户输入的验证码和session中保存的验证码是否一致。
 
