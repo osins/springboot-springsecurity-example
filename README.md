@@ -310,7 +310,9 @@ public class KaptchaController {
 
 BCryptPasswordEncoder是Springboot security中自带的一个用户密码加密工具:
 
-#### 1.encode方法用来加密密码
+#### 1.encode
+
+encode方法用来加密密码
 
 ```
     public void addUser(UserInfo userInfo) {
@@ -334,7 +336,9 @@ BCryptPasswordEncoder是Springboot security中自带的一个用户密码加密�
     }
 ```
 
-#### 2.matches方法用来比对用户登录时输入的密码和数据库中获取到的加密后的字符串是否匹配。
+#### 2.matches
+
+matches方法用来比对用户登录时输入的密码和数据库中获取到的加密后的字符串是否匹配。
 
 ```
     @Override
