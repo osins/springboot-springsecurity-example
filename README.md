@@ -17,7 +17,7 @@ Springboot-springsecurity-example 是一个springboot中应用springsecurity的�
 
 #### 5、自定义登录逻辑
 创建一个继承自org.springframework.security.authentication.AuthenticationProvider的类，实现用户登录验证服务，其中authenticate方法是具体验证的方法，其中包括用户名、密码、验证码的比对。
-
+```
 @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         SWebAuthenticationDetails details = (SWebAuthenticationDetails) authentication.getDetails();
@@ -50,6 +50,7 @@ Springboot-springsecurity-example 是一个springboot中应用springsecurity的�
 
         return new UsernamePasswordAuthenticationToken(details.getUsername(), details.getPassword(), authorities);// 构建返回的用户登录成功的token
     }
+```
 
 #### 6、配置Spring security
 创建一个继承自org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter的类，以实现Spring security的配置。
