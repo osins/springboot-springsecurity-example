@@ -236,4 +236,63 @@ configure(AuthenticationManagerBuilder auth) 方法实现了绑定自定义验�
 
 本例中验证码采用了Google的kaptcha，在DefaultController的login方法中初始化和保存验证码到Session，在继承自AuthenticationProvider的SAuthenticationProvider类中比对用户输入的验证码和session中保存的验证码是否一致。
 
+```
+import javax.imageio.ImageIO;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
+
+@Controller
+@RequestMapping("/")
+public class KaptchaController {
+    private static final Logger log = LoggerFactory.getLogger(DefaultController.class);
+
+    /**
+     * 1、验证码工具
+     */
+    @Autowired
+    DefaultKaptcha defaultKaptcha;
+
+    /**
+     * 2、生成验证码
+     * @param httpServletRequest
+     * @param httpServletResponse
+     * @throws Exception
+     */
+    @RequestMapping("/kaptcha.jpg")
+    public void outcodeimg(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws Exception {
+        String sessionCaptcha = (String) httpServletRequest.getSession().getAttribute(Constants.KAPTCHA_SESSION_KEY);
+        log.debug("doGetAuthenticationInfo session captcha: "+sessionCaptcha);
+
+        byte[] captchaChallengeAsJpeg = null;
+        ByteArrayOutputStream jpegOutputStream = new ByteArrayOutputStream();
+        try {
+            // 生产验证码字符串并保存到session中
+            String createText = defaultKaptcha.createText();
+            httpServletRequest.getSession().setAttribute(Constants.KAPTCHA_SESSION_KEY, createText);
+            // 使用生产的验证码字符串返回一个BufferedImage对象并转为byte写入到byte数组中
+            BufferedImage challenge = defaultKaptcha.createImage(createText);
+            ImageIO.write(challenge, "jpg", jpegOutputStream);
+        } catch (IllegalArgumentException e) {
+            httpServletResponse.sendError(HttpServletResponse.SC_NOT_FOUND);
+            return;
+        }
+
+        // 定义response输出类型为image/jpeg类型，使用response输出流输出图片的byte数组
+        captchaChallengeAsJpeg = jpegOutputStream.toByteArray();
+        httpServletResponse.setHeader("Cache-Control", "no-store");
+        httpServletResponse.setHeader("Pragma", "no-cache");
+        httpServletResponse.setDateHeader("Expires", 0);
+        httpServletResponse.setContentType("image/jpeg");
+
+        ServletOutputStream responseOutputStream = httpServletResponse.getOutputStream();
+        responseOutputStream.write(captchaChallengeAsJpeg);
+        responseOutputStream.flush();
+        responseOutputStream.close();
+    }
+}
+```
+
 BCryptPasswordEncoder是Springboot security中自带的一个用户密码加密工具，encode方法用来加密密码，matches方法用来比对用户登录时输入的密码和数据库中获取到的加密后的字符串是否匹配。
