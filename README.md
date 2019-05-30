@@ -1,11 +1,12 @@
-# Springboot-springsecurity-example
----
+## Springboot-springsecurity-example
+
 对于初次接触springboot的程序员，可能对于Springboot的安全验证比较陌生，希望能够通过本示例快速掌握Spring security的配置和相关代码的编写。
 Springboot-springsecurity-example 是一个springboot中应用springsecurity的例子，同时本示例自定义了用户名、密码、验证码的登录验证规则。
 
 ### Spring security重要的几个代码在security目录下，其中代码编写顺序如下：
+
 #### 1、用户信息
----
+
 创建一个继承自org.springframework.security.core.userdetails.UserDetails的类，该类实现了用户基本信息和登录验证相关的几个方法。
 
 SUserDetails继承自UserInfo是Java数据库开源框架Jooq连接数据库自动生成的pojo，即User表对应的Java对象。
@@ -45,7 +46,7 @@ public class SUserDetails extends UserInfo implements org.springframework.securi
 ```
 
 #### 2、数据连接
----
+
 创建一个继承自org.springframework.security.core.userdetails.UserDetailsService的类，实现数据库中获取用户信息的功能代码。
 
 ```
@@ -81,7 +82,7 @@ public class SUserDetailsServiceImpl implements UserDetailsService {
 ```
 
 #### 3、web数据获取
----
+
 创建一个继承自org.springframework.security.web.authentication.WebAuthenticationDetails的类，实现web验证相关的验证详情，其实就是通过此类来获取用户登录提交的表单信息。
 
 ```
@@ -124,7 +125,7 @@ public class SWebAuthenticationDetails extends WebAuthenticationDetails {
 }
 ```
 #### 4、web提交登录数据来源绑定
----
+
 创建一个继承自org.springframework.security.authentication.AuthenticationDetailsSource的类，实现web验证相关的来源。
 
 ```
@@ -145,8 +146,9 @@ public class SAuthenticationDetailsSource implements AuthenticationDetailsSource
 ```
 
 #### 5、自定义登录逻辑
----
+
 创建一个继承自org.springframework.security.authentication.AuthenticationProvider的类，实现用户登录验证服务，其中authenticate方法是具体验证的方法，其中包括用户名、密码、验证码的比对。
+
 ```
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
@@ -183,7 +185,7 @@ public class SAuthenticationDetailsSource implements AuthenticationDetailsSource
 ```
 
 #### 6、配置Spring security
----
+
 创建一个继承自org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter的类，以实现Spring security的配置。
 
 configure(HttpSecurity http) 方法实现了绑定自定义验证详情来源、登录和成功后的处理规则。
@@ -241,8 +243,10 @@ configure(AuthenticationManagerBuilder auth) 方法实现了绑定自定义验�
     }
 ```
 
-### 本例中验证码采用了Google的kaptcha，在DefaultController的login方法中初始化和保存验证码到Session，在继承自AuthenticationProvider的SAuthenticationProvider类中比对用户输入的验证码和session中保存的验证码是否一致。
----
+### Kaptcha
+
+本例中验证码采用了Google的kaptcha，在DefaultController的login方法中初始化和保存验证码到Session，在继承自AuthenticationProvider的SAuthenticationProvider类中比对用户输入的验证码和session中保存的验证码是否一致。
+
 ```
 import javax.imageio.ImageIO;
 import javax.servlet.ServletOutputStream;
@@ -302,10 +306,11 @@ public class KaptchaController {
 }
 ```
 
-### BCryptPasswordEncoder是Springboot security中自带的一个用户密码加密工具:
----
-#### 1.encode方法用来加密密码
+### BCryptPasswordEncoder
 
+BCryptPasswordEncoder是Springboot security中自带的一个用户密码加密工具:
+
+#### 1.encode方法用来加密密码
 
 ```
     public void addUser(UserInfo userInfo) {
@@ -330,6 +335,7 @@ public class KaptchaController {
 ```
 
 #### 2.matches方法用来比对用户登录时输入的密码和数据库中获取到的加密后的字符串是否匹配。
+
 ```
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
