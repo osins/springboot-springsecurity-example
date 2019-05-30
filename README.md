@@ -59,6 +59,33 @@ configure(HttpSecurity http) 方法实现了绑定自定义验证详情来源、
 configure(AuthenticationManagerBuilder auth) 方法实现了绑定自定义验证的处理规则。
 
 ```
+    @Autowired
+    private SAuthenticationDetailsSource sAuthenticationDetailsSource;
+
+    @Autowired
+    private SUserDetailsServiceImpl userDetailService;
+
+    /**
+     * 注入自定义的 AuthenticationProvider (用户名，密码，验证码验证规则）
+     */
+    @Autowired
+    private SAuthenticationProvider securityAuthenticationProvider;
+
+    /**
+     * 注入自定义的 AuthenticationSuccessHandler (验证成功的规则）
+     */
+    @Autowired
+    private SAuthenticationSuccessHandler securityAuthenticationSuccessHandler;
+
+    /**
+     * 注入自定义的 AuthenticationFailureHandler （验证失败的规则）
+     */
+    @Autowired
+    private SAuthenticationFailHandler securityAuthenticationFailHandler;
+
+    @Autowired
+    private SUserDetailsServiceImpl userDetailsService;
+    
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
