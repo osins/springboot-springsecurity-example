@@ -54,6 +54,23 @@ public class SWebAuthenticationDetails extends WebAuthenticationDetails {
 #### 4、web提交登录数据来源绑定
 创建一个继承自org.springframework.security.authentication.AuthenticationDetailsSource的类，实现web验证相关的来源。
 
+```
+import org.springframework.security.authentication.AuthenticationDetailsSource;
+import org.springframework.security.web.authentication.WebAuthenticationDetails;
+import org.springframework.stereotype.Component;
+
+import javax.servlet.http.HttpServletRequest;
+
+@Component
+public class SAuthenticationDetailsSource implements AuthenticationDetailsSource<HttpServletRequest, WebAuthenticationDetails> {
+
+    @Override
+    public WebAuthenticationDetails buildDetails(HttpServletRequest httpServletRequest) {
+        return new SWebAuthenticationDetails(httpServletRequest);
+    }
+}
+```
+
 #### 5、自定义登录逻辑
 创建一个继承自org.springframework.security.authentication.AuthenticationProvider的类，实现用户登录验证服务，其中authenticate方法是具体验证的方法，其中包括用户名、密码、验证码的比对。
 ```
