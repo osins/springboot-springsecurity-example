@@ -268,7 +268,6 @@ public class SAuthenticationProvider implements AuthenticationProvider {
         return true;// 返回 true ，表示支持执行
     }
 }
-
 ```
 
 ### Kaptcha
@@ -393,7 +392,7 @@ matches方法用来比对用户登录时输入的密码和数据库中获取到�
         }
 
         /** 判断账号是否停用/删除 */
-//        if (SystemUserConstants.STOP.equals(userInfo.getStatus()) || SystemUserConstants.DELETED.equals(userInfo.getStatus())) {
+//        if (SystemUserConstants.STOP.equals(userInfo.getStatus()) ||            SystemUserConstants.DELETED.equals(userInfo.getStatus())) {
 //            throw new DisabledException("账户不可用");
 //        }
 
