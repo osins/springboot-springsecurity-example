@@ -1,7 +1,7 @@
-# springboot-springsecurity-example
-springboot-springsecurity-example 是一个springboot中应用springsecurity的例子，同时本示例自定义了用户名、密码、验证码的登录验证。
+# Springboot-springsecurity-example
+Springboot-springsecurity-example 是一个springboot中应用springsecurity的例子，同时本示例自定义了用户名、密码、验证码的登录验证。
 
-### spring security重要的几个代码在security目录下，其中代码编写顺序如下：
+### Spring security重要的几个代码在security目录下，其中代码编写顺序如下：
 #### 1、用户信息
 创建一个继承自org.springframework.security.core.userdetails.UserDetails的类，该类实现了用户基本信息和登录验证相关的几个方法。
 
@@ -18,9 +18,9 @@ springboot-springsecurity-example 是一个springboot中应用springsecurity的�
 创建一个继承自org.springframework.security.authentication.AuthenticationProvider的类，实现用户登录验证服务，其中authenticate方法具体验证的方法，其中包括用户名、密码、验证码的比对。
 
 #### 6、配置Spring security
-创建和一个继承自org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter的类，以实现spring security的配置。
+创建和一个继承自org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter的类，以实现Spring security的配置。
 
 configure(HttpSecurity http) 方法实现了绑定自定义验证详情来源、登录和成功后的处理规则。
 configure(AuthenticationManagerBuilder auth) 方法实现了绑定自定义验证的处理规则。
 
-本例中验证码采用了google的kaptcha，在DefaultController的login方法中初始化和保存验证码到session，在继承自AuthenticationProvider的SAuthenticationProvider类中比对用户输入的验证码和session中保存的验证码是否一致。
+本例中验证码采用了Google的kaptcha，在DefaultController的login方法中初始化和保存验证码到Session，在继承自AuthenticationProvider的SAuthenticationProvider类中比对用户输入的验证码和session中保存的验证码是否一致。
