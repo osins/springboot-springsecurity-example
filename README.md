@@ -6,7 +6,7 @@ Springboot-springsecurity-example 是一个springboot中应用springsecurity的�
 #### 1、用户信息
 创建一个继承自org.springframework.security.core.userdetails.UserDetails的类，该类实现了用户基本信息和登录验证相关的几个方法。
 
-UserInfo是Jooq连接数据自动生成的pojo，即User表对应的Java对象。
+SUserDetails继承自UserInfo是Java数据库开源框架Jooq连接数据自动生成的pojo，即User表对应的Java对象。
 
 ```
 import com.siyuo2o.glass.db.album.tables.pojos.UserInfo;
