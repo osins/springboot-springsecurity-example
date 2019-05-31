@@ -36,10 +36,10 @@ public class SAuthenticationProvider implements AuthenticationProvider {
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         SWebAuthenticationDetails details = (SWebAuthenticationDetails) authentication.getDetails();
 
-        log.debug("auth username:"+details.getUsername());
+        log.debug("auth username:" + details.getUsername());
         log.debug("auth password:" + details.getPassword());
-        log.debug("auth kaptcha code:"+details.getCaptchCode());
-        log.debug("auth kaptcha session:"+ details.getCaptchSession());
+        log.debug("auth kaptcha code:" + details.getCaptchCode());
+        log.debug("auth kaptcha session:" + details.getCaptchSession());
 
         /** 判断用户是否存在 */
         SUserDetails userInfo = userDetailService.loadUserByUsername(details.getUsername()); // 这里调用我们的自己写的获取用户的方法；

@@ -12,11 +12,11 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 class SWebSecurityConfig extends WebSecurityConfigurerAdapter {
 
+    /**
+     * 注入自定义的 验证信息详情来源
+     */
     @Autowired
     private SAuthenticationDetailsSource sAuthenticationDetailsSource;
-
-    @Autowired
-    private SUserDetailsServiceImpl userDetailService;
 
     /**
      * 注入自定义的 AuthenticationProvider (用户名，密码，验证码验证规则）
@@ -42,19 +42,19 @@ class SWebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
-                .formLogin().loginPage("/login")
-                .loginProcessingUrl("/login")
-                .authenticationDetailsSource(sAuthenticationDetailsSource)
-                .successHandler(securityAuthenticationSuccessHandler)
-                .failureHandler(securityAuthenticationFailHandler)
-                .permitAll()  // 登录页面链接、登录表单链接、登录失败页面链接配置
-                .and()
-                .authorizeRequests()
-                .antMatchers("/ace/**", "/loginfail", "/kaptcha.jpg").permitAll() // 静态资源配置
-                .antMatchers("/index", "/login-error").permitAll() // 免校验链接配置
-                .anyRequest().authenticated()
-                .and()
-                .csrf().disable();
+            .formLogin().loginPage("/login")
+            .loginProcessingUrl("/login")
+            .authenticationDetailsSource(sAuthenticationDetailsSource)
+            .successHandler(securityAuthenticationSuccessHandler)
+            .failureHandler(securityAuthenticationFailHandler)
+            .permitAll()  // 登录页面链接、登录表单链接、登录失败页面链接配置
+            .and()
+            .authorizeRequests()
+            .antMatchers("/ace/**", "/loginfail", "/kaptcha.jpg").permitAll() // 静态资源配置
+            .antMatchers("/index", "/login-error").permitAll() // 免校验链接配置
+            .anyRequest().authenticated()
+            .and()
+            .csrf().disable();
     }
 
     @Override

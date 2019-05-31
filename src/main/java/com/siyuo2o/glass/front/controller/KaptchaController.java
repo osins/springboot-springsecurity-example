@@ -35,7 +35,7 @@ public class KaptchaController {
     @RequestMapping("/kaptcha.jpg")
     public void outcodeimg(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws Exception {
         String sessionCaptcha = (String) httpServletRequest.getSession().getAttribute(Constants.KAPTCHA_SESSION_KEY);
-        log.debug("doGetAuthenticationInfo session captcha: "+sessionCaptcha);
+        log.debug("doGetAuthenticationInfo session captcha: " + sessionCaptcha);
 
         byte[] captchaChallengeAsJpeg = null;
         ByteArrayOutputStream jpegOutputStream = new ByteArrayOutputStream();
